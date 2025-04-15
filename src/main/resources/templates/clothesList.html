@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clothes List</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="text-center mb-4">Clothes List</h1>
+
+      <!--button to filter by brand an the year-->
+      <form
+        action="/clotheslist/filterByBrandAndYear"
+        method="get"
+        class="d-flex gap-2 mb-4"
+      >
+        <label for="brand" class="form-label me-2">Filter by Brand:</label>
+        <select name="brand" id="brand" class="form-select w-auto">
+          <option value="Dior">Dior</option>
+          <option value="BALENCIAGA">Balenciaga</option>
+          <option value="GUCCI">Gucci</option>
+        </select>
+        <input type="hidden" name="yearOfCreation" value="2022" />
+        <button type="submit" class="btn btn-primary">Filter by 2022</button>
+      </form>
+
+      <!--sort by brand-->
+      <form action="/clotheslist/sortByBrand" method="get" class="mb-4">
+        <button type="submit" class="btn btn-secondary">Sort by Brand</button>
+      </form>
+
+      <div class="row">
+        <div th:each="clothe : ${clothes}" class="col-md-4 mb-4">
+          <div class="card p-3">
+            <h5 th:text="${clothe.name}">Clothe Name</h5>
+            <p>
+              <strong>Brand:</strong> <span th:text="${clothe.brand}"></span>
+            </p>
+            <p>
+              <strong>Price:</strong> $<span th:text="${clothe.price}"></span>
+            </p>
+            <p>
+              <strong>Year of Creation:</strong>
+              <span th:text="${clothe.yearOfCreation}"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
