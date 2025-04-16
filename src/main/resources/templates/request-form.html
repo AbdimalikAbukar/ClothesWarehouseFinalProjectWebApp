@@ -2,37 +2,58 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Request Item</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
   </head>
-  <body>
-    <h1>Request Item from Distribution Centre</h1>
+  <body
+    class="d-flex justify-content-center align-items-center flex-column mt-5"
+  >
+    <h1 class="display-1 text-center mb-4">Request Clothe</h1>
 
-    <h2>Request Clothe</h2>
-    <form th:action="@{/admin/clothes/request-item}" method="post">
-      <!-- Input field for Clothe Name -->
-      <label for="name">Clothe Name:</label>
-      <input type="text" id="name" name="name" required />
+    <form th:action="@{/admin/clothes/request-item}" method="post" class="w-50">
+      <div th:if="${message != null}" class="alert alert-info text-center">
+        <span th:text="${message}"></span>
+      </div>
 
-      <br /><br />
+      <div class="mb-3">
+        <input
+          name="name"
+          type="text"
+          placeholder="Clothe Name"
+          class="form-control"
+          required
+        />
+      </div>
 
-      <!-- Input field for Brand Name -->
-      <label for="brand">Brand:</label>
-      <input type="text" id="brand" name="brand" required />
+      <div class="mb-3">
+        <input
+          name="brand"
+          type="text"
+          placeholder="Brand"
+          class="form-control"
+          required
+        />
+      </div>
 
-      <br /><br />
+      <div class="mb-3">
+        <input
+          name="quantity"
+          type="number"
+          min="1"
+          placeholder="Quantity"
+          class="form-control"
+          required
+        />
+      </div>
 
-      <!-- Input field for Quantity -->
-      <label for="quantity">Quantity:</label>
-      <input type="number" id="quantity" name="quantity" min="1" required />
-
-      <br /><br />
-
-      <!-- Submit Button -->
-      <button type="submit">Request Item</button>
+      <button type="submit" class="btn btn-primary w-100">Request</button>
     </form>
-
-    <!-- Display success or error messages -->
-    <div th:if="${message != null}" th:text="${message}"></div>
   </body>
 </html>

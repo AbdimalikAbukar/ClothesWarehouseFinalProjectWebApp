@@ -16,8 +16,8 @@ import java.util.List;
 @Configuration
 public class AppConfig {
 
-    private static final String USERNAME = "admin"; // Replace with your username
-    private static final String PASSWORD = "admin123"; // Replace with your password
+    private static final String USERNAME = "admin";
+    private static final String PASSWORD = "admin123";
 
     @Bean
     public RestTemplate restTemplate() {

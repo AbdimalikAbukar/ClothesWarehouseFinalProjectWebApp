@@ -30,12 +30,10 @@ public class Clothe {
     @Enumerated(EnumType.STRING)
     private Brand brand;
 
-    // New field for quantity in stock
     @NotNull
-    @Min(0) // Ensure the quantity can't be negative
+    @Min(0)
     private Integer quantity;
 
-    // Getter and Setter for quantity
     public Integer getQuantity() {
         return this.quantity;
     }

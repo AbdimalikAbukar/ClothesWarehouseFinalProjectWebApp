@@ -18,13 +18,13 @@ public class AdminController {
 
     @GetMapping("/request-item")
     public String showRequestForm() {
-        return "request-form"; // You should have a corresponding HTML page in templates
+        return "request-form";
     }
 
     @PostMapping("/request-item")
     public String requestItem(@RequestParam String brand,
-                              @RequestParam String name,
-                              Model model) {
+            @RequestParam String name,
+            Model model) {
         RestTemplate restTemplate = new RestTemplate();
 
         Map<String, String> itemRequest = new HashMap<>();

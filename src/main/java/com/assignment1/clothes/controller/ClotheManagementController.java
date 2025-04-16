@@ -27,8 +27,6 @@ public class ClotheManagementController {
     @Autowired
     private DistributionCentreClient distributionCentreClient;
 
-    // Serve the clothes management page with the list of clothes and distribution
-    // centres
     @GetMapping
     public String manageClothes(Model model) {
         // Fetch all clothes
@@ -39,59 +37,48 @@ public class ClotheManagementController {
         List<DistributionCenter> distributionCenters = distributionCentreClient.getAllDistributionCentres();
         model.addAttribute("distributionCenters", distributionCenters); // Add distribution centres to the model
 
-        return "clothesManagement"; // Return the correct view for clothes management
+        return "clothesManagement";
     }
 
-    // Delete item by ID (restricted to ADMIN role)
+    // Delete item by ID restricted to ADMIN role
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/delete/{id}")
     public String deleteClothe(@PathVariable Long id) {
-        clotheService.deleteClotheById(id); // Delete the clothing item
-        return "redirect:/admin/clothes"; // Redirect to the clothes management page
+        clotheService.deleteClotheById(id);
+        return "redirect:/admin/clothes";
     }
 
     // Serve the request form page
     @GetMapping("/request-form")
     public String showRequestForm(Model model) {
         List<Clothe> clothes = clotheService.getAllClothesFromDistributionCenters(); // Fetch clothes from the service
-        model.addAttribute("clothes", clothes); // Add clothes to the model
-        return "request-form"; // The name of the Thymeleaf template
+        model.addAttribute("clothes", clothes);
+        return "request-form";
     }
 
-    // Request item from distribution centre (restricted to ADMIN role)
+    // Request item from distribution centre restricted to ADMIN role
     @PostMapping("/request-item")
     public String requestItem(@RequestParam String name, @RequestParam String brand, @RequestParam int quantity,
             Model model) {
-        // Log the item details that are being requested
-        System.out.println("Requesting item: Name=" + name + ", Brand=" + brand + ", Quantity=" + quantity);
 
-        // Request item from the distribution center
         ItemResponse response = distributionCentreClient.requestItem(brand, name, quantity);
 
-        // Log the response object to see what we get
-        System.out.println("Response from distribution centre: " + response);
-
-        // Check if the response indicates success
-        if (response != null && response.isSuccess()) {
-            // Assuming the response contains the updated quantity and other missing details
+        if (response != null) {
             Clothe clothe = new Clothe();
-            clothe.setName(name);
-            clothe.setBrand(Clothe.Brand.valueOf(brand.toUpperCase())); // Ensure proper enum mapping
-            clothe.setQuantity(response.getUpdatedQuantity()); // Updated quantity from the response
-            clothe.setPrice(response.getPrice()); // Assuming price is returned in the response
+            clothe.setName(response.getName());
+            clothe.setBrand(response.getBrand());
+            clothe.setPrice(response.getPrice());
+            clothe.setYearOfCreation(response.getYearOfCreation());
+            clothe.setQuantity(response.getQuantity());
 
-            // Save the item to the clothes repository
             clotheRepository.save(clothe);
 
-            // Add success message and show updated list of clothes
             model.addAttribute("message", "Item successfully requested and added to the warehouse.");
-            return "redirect:/clotheslist"; // Redirect to clothes list page after successful addition
+            return "redirect:/clotheslist";
         } else {
-            // Log if response is null or if success is false
-            System.out.println("Item request failed. Response: " + response);
             model.addAttribute("message", "Sorry, the item could not be replenished.");
         }
 
-        return "request-form"; // Return the appropriate view
+        return "request-form";
     }
 }

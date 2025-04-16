@@ -1,6 +1,7 @@
 package com.assignment1.clothes.client;
 
 import com.assignment1.clothes.model.DistributionCenter;
+import com.assignment1.clothes.model.ItemRequest;
 import com.assignment1.clothes.model.ItemResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -71,38 +72,4 @@ public class DistributionCentreClient {
         }
     }
 
-    // Inner class representing the request body to the Distribution Centre API
-    private static class ItemRequest {
-        private String brand; // Use brand to match the backend model
-        private String name; // Corrected from 'name' to name
-        private int quantity; // Added quantity field for adding an item
-
-        // Constructor for requestItem with quantity
-        public ItemRequest(String brand, String name, int quantity) {
-            this.brand = brand; // Ensure brand is consistent with your API requirements
-            this.name = name;
-            this.quantity = quantity;
-        }
-
-        public String getBrand() {
-            return brand; // Correct getter to match the backend field name
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getQuantity() {
-            return quantity;
-        }
-
-        @Override
-        public String toString() {
-            return "ItemRequest{" +
-                    "brand='" + brand + '\'' +
-                    ", name='" + name + '\'' +
-                    ", quantity=" + quantity +
-                    '}';
-        }
-    }
 }

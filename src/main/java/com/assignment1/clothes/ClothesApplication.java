@@ -24,13 +24,12 @@ public class ClothesApplication {
 	public CommandLineRunner dataLoader(ClotheRepository clotheRepository, UserRepository userRepository,
 			PasswordEncoder passwordEncoder, DistributionCentreClient distributionCentreClient) {
 		return args -> {
-			// Add sample clothes
+
 			clotheRepository.save(new Clothe(null, "Ethiopian Pants", 2500.50, 2024, Clothe.Brand.DIOR, 0));
 			clotheRepository.save(new Clothe(null, "Classic Hoodie", 1200.75, 2022, Clothe.Brand.GUCCI, 0));
 			clotheRepository.save(new Clothe(null, "Leather Jacket", 1200.99, 2025, Clothe.Brand.BALENCIAGA, 0));
 			clotheRepository.save(new Clothe(null, "Slim Fit Jeans", 1200.89, 2023, Clothe.Brand.STONE_ISLAND, 0));
 
-			// Create users
 			createUsers(userRepository, passwordEncoder);
 		};
 	}

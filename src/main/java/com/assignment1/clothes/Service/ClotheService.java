@@ -10,6 +10,5 @@ public interface ClotheService {
 
     Clothe getClotheById(Long clotheId);
 
-    // ✅ New method
     List<Clothe> getAllClothesFromDistributionCenters();
 }

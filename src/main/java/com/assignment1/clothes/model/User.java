@@ -24,7 +24,7 @@ public class User {
     private String password;
 
     @Column(name = "role", nullable = false)
-    private String role; // e.g., "USER", "ADMIN"
+    private String role;
 
     public enum Role {
         ADMIN, USER, WAREHOUSE
