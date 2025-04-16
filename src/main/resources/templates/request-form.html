@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,36 +8,29 @@
   <body>
     <h1>Request Item from Distribution Centre</h1>
 
-    <h2>Clothes List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Clothe Name</th>
-          <th>Brand</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Iterate over clothes -->
-        <tr th:each="clothe : ${clothes}">
-          <td th:text="${clothe.name}"></td>
-          <td th:text="${clothe.brand?.brandName}">Unknown Brand</td>
-          <td>
-            <!-- Form to request item -->
-            <form th:action="@{/admin/clothes/request-item}" method="post">
-              <!-- Hidden input for clotheId -->
-              <input type="hidden" th:name="clotheId" th:value="${clothe.id}" />
+    <h2>Request Clothe</h2>
+    <form th:action="@{/admin/clothes/request-item}" method="post">
+      <!-- Input field for Clothe Name -->
+      <label for="name">Clothe Name:</label>
+      <input type="text" id="name" name="name" required />
 
-              <!-- Input for quantity -->
-              <label for="quantity">Quantity:</label>
-              <input type="number" th:name="quantity" min="1" required />
+      <br /><br />
 
-              <button type="submit">Request Item</button>
-            </form>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <!-- Input field for Brand Name -->
+      <label for="brand">Brand:</label>
+      <input type="text" id="brand" name="brand" required />
+
+      <br /><br />
+
+      <!-- Input field for Quantity -->
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" name="quantity" min="1" required />
+
+      <br /><br />
+
+      <!-- Submit Button -->
+      <button type="submit">Request Item</button>
+    </form>
 
     <!-- Display success or error messages -->
     <div th:if="${message != null}" th:text="${message}"></div>

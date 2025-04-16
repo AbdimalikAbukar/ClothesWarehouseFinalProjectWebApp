@@ -4,7 +4,8 @@ import com.assignment1.clothes.Service.ClotheService;
 import com.assignment1.clothes.client.DistributionCentreClient;
 import com.assignment1.clothes.model.Clothe;
 import com.assignment1.clothes.model.DistributionCenter;
-
+import com.assignment1.clothes.model.ItemResponse;
+import com.assignment1.clothes.repository.ClotheRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,9 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/clothes")
 public class ClotheManagementController {
+
+    @Autowired
+    private ClotheRepository clotheRepository; // Repository for accessing clothing data
 
     @Autowired
     private ClotheService clotheService;
@@ -55,29 +59,39 @@ public class ClotheManagementController {
     }
 
     // Request item from distribution centre (restricted to ADMIN role)
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/request-item")
-    public String requestItem(@RequestParam Long clotheId, @RequestParam int quantity, Model model) {
-        Clothe clothe = clotheService.getClotheById(clotheId);
+    public String requestItem(@RequestParam String name, @RequestParam String brand, @RequestParam int quantity,
+            Model model) {
+        // Log the item details that are being requested
+        System.out.println("Requesting item: Name=" + name + ", Brand=" + brand + ", Quantity=" + quantity);
 
-        if (clothe == null) {
-            model.addAttribute("message", "Clothe not found.");
-            return "request-form";
-        }
+        // Request item from the distribution center
+        ItemResponse response = distributionCentreClient.requestItem(brand, name, quantity);
 
-        // 🛠 Pass quantity along with brand and name
-        boolean success = distributionCentreClient.requestItem(
-                clothe.getBrand().getBrandName(),
-                clothe.getName(),
-                quantity);
+        // Log the response object to see what we get
+        System.out.println("Response from distribution centre: " + response);
 
-        if (success) {
-            model.addAttribute("message", "Item successfully requested from distribution centre.");
+        // Check if the response indicates success
+        if (response != null && response.isSuccess()) {
+            // Assuming the response contains the updated quantity and other missing details
+            Clothe clothe = new Clothe();
+            clothe.setName(name);
+            clothe.setBrand(Clothe.Brand.valueOf(brand.toUpperCase())); // Ensure proper enum mapping
+            clothe.setQuantity(response.getUpdatedQuantity()); // Updated quantity from the response
+            clothe.setPrice(response.getPrice()); // Assuming price is returned in the response
+
+            // Save the item to the clothes repository
+            clotheRepository.save(clothe);
+
+            // Add success message and show updated list of clothes
+            model.addAttribute("message", "Item successfully requested and added to the warehouse.");
+            return "redirect:/clotheslist"; // Redirect to clothes list page after successful addition
         } else {
+            // Log if response is null or if success is false
+            System.out.println("Item request failed. Response: " + response);
             model.addAttribute("message", "Sorry, the item could not be replenished.");
         }
 
-        return "request-form";
+        return "request-form"; // Return the appropriate view
     }
-
 }

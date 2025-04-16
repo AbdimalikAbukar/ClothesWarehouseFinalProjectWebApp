@@ -1,9 +1,11 @@
 package com.assignment1.clothes.client;
 
 import com.assignment1.clothes.model.DistributionCenter;
+import com.assignment1.clothes.model.ItemResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.RestClientException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 
@@ -13,7 +15,6 @@ public class DistributionCentreClient {
     private static final String DISTRIBUTION_CENTRE_API_URL = "http://localhost:8081/api/centres"; // URL for the
                                                                                                    // Distribution
                                                                                                    // Centre API
-
     private final RestTemplate restTemplate;
 
     public DistributionCentreClient(RestTemplate restTemplate) {
@@ -21,16 +22,31 @@ public class DistributionCentreClient {
     }
 
     // Request an item from the Distribution Centre
-    public boolean requestItem(String brand, String name, int quantity) {
+    public ItemResponse requestItem(String brand, String name, int quantity) {
         try {
-            ItemRequest itemRequest = new ItemRequest(brand, name, quantity); // Prepare request body
-            String response = restTemplate.postForObject(DISTRIBUTION_CENTRE_API_URL + "/request", itemRequest,
-                    String.class); // Send request
+            // Create the request object with the item details
+            ItemRequest itemRequest = new ItemRequest(brand, name, quantity);
+            System.out.println("Incoming item request: " + itemRequest);
 
-            // If response is "success", return true, else false
-            return "success".equals(response);
+            // Send the POST request and capture the response as an ItemResponse object
+            ResponseEntity<ItemResponse> response = restTemplate.postForEntity(
+                    DISTRIBUTION_CENTRE_API_URL + "/request", // URL for the distribution center
+                    itemRequest, // The item request payload
+                    ItemResponse.class); // Expecting an ItemResponse object in return
+
+            // Handle the response
+            if (response.getStatusCode() == HttpStatus.OK) {
+                // Successfully received item info
+                return response.getBody(); // Return the ItemResponse object
+            } else {
+                // If not successful, return null or an error response
+                return null;
+            }
+
         } catch (Exception e) {
-            return false; // Handle error during API request
+            // Handle any exceptions that might occur
+            System.err.println("Error requesting item: " + e.getMessage());
+            return null; // Return null or an error response
         }
     }
 
@@ -45,7 +61,6 @@ public class DistributionCentreClient {
                     });
 
             List<DistributionCenter> distributionCentres = responseEntity.getBody();
-
             // Log the fetched distribution centres
             System.out.println("Distribution Centres: " + distributionCentres);
 
@@ -58,27 +73,36 @@ public class DistributionCentreClient {
 
     // Inner class representing the request body to the Distribution Centre API
     private static class ItemRequest {
-        private String brand; // Changed from brandFrom to match the expected parameter name
-        private String itemName; // Changed from 'name' to match expected name
+        private String brand; // Use brand to match the backend model
+        private String name; // Corrected from 'name' to name
         private int quantity; // Added quantity field for adding an item
 
         // Constructor for requestItem with quantity
-        public ItemRequest(String brand, String itemName, int quantity) {
-            this.brand = brand;
-            this.itemName = itemName;
+        public ItemRequest(String brand, String name, int quantity) {
+            this.brand = brand; // Ensure brand is consistent with your API requirements
+            this.name = name;
             this.quantity = quantity;
         }
 
         public String getBrand() {
-            return brand;
+            return brand; // Correct getter to match the backend field name
         }
 
-        public String getItemName() {
-            return itemName;
+        public String getName() {
+            return name;
         }
 
         public int getQuantity() {
             return quantity;
+        }
+
+        @Override
+        public String toString() {
+            return "ItemRequest{" +
+                    "brand='" + brand + '\'' +
+                    ", name='" + name + '\'' +
+                    ", quantity=" + quantity +
+                    '}';
         }
     }
 }
